@@ -1,0 +1,32 @@
+{
+  "name": "kola/potato-ORM",
+  "description": "",
+  "keywords": [
+    ""
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kolawole Erinoso",
+      "email": "kola.erinoso@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Kola\\": "src/"
+    },
+    "classmap": ["src/"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Kola\\Potato-ORM\\Test\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=5.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.8.*"
+  }
+}

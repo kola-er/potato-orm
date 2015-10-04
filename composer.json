@@ -1,8 +1,9 @@
 {
-  "name": "kola/potato-ORM",
-  "description": "",
+  "name": "kola/potato-orm",
+  "description": "This is an ORM package that manages the persistence of database CRUD operations.",
   "keywords": [
-    ""
+    "ORM",
+    "persistence"
   ],
   "license": "MIT",
   "authors": [
@@ -20,13 +21,15 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Kola\\Potato-ORM\\Test\\": "tests/"
+      "Kola\\PotatoOrm\\Test\\": "tests/"
     }
   },
   "require": {
-    "php": ">=5.5"
+    "php": ">=5.5",
+    "vlucas/phpdotenv": "^2.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.*"
+    "phpunit/phpunit": "4.8.*",
+    "Mockery/Mockery": ">=0.7.2"
   }
 }

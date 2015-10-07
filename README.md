@@ -22,17 +22,43 @@ Create a class with the name of the corresponding table in the database. Extend 
 
 For instance, a class for `jobs` table should look like this:
 
-> namespace Kola\PotatoOrm;
+``` php
+namespace Kola\PotatoOrm;
 
-> class Job extends Model
-> {
-> }
+class Dog extends Model
+{
+}
+```
+
+* Create and save a record to database
+
+``` php
+$dog = new Dog();
+$dog->name = "Rex";
+$dog->breed= "Alsatian";
+$dog->origin = "Germany";
+$dog->save();
+```
+
+* Find and update a record in database
+
+``` php
+$dog = Dog::find(4);
+$dog->name = "Bruno";
+$dog->save();
+```
+
+* Delete a record
+
+``` php
+$dog = Dog::destroy(2);
+```
 
 Feel free to name the class as the singular of the name of the database table. For instance, `User` class for `users` table.
 
 `Note: Plural of irregular nouns are not supported`
 
-For instance, a class `Fish` should map to a table `Fish`, not `Fishes`. And a class `Child` should map to a table `Child`, not `Children`.
+For instance, a class `Fish` should map to a table `fish`, not `fishes`. And a class `Child` should map to a table `child`, not `children`.
 
 ## Change log
 

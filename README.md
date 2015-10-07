@@ -1,6 +1,6 @@
 # potato-orm
 
-This is an ORM package that manages the persistence of database CRUD operations.
+This is an ORM package that manages the persistence of simple database CRUD operations.
 
 ## Installation
 

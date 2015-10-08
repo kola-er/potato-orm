@@ -45,7 +45,7 @@ final class DbConn extends PDO implements DbConnInterface
      */
     private static function loadDotenv()
     {
-        $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../..');
+        $dotenv = new \Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT']);
         $dotenv->load();
     }
 }

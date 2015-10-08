@@ -21,7 +21,7 @@ abstract class Model
     /**
      * @var array Array for holding properties set with magic method __set()
      */
-    protected $record = [];
+    public $record = [];
 
     /**
 	 * Set property dynamically

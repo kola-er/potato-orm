@@ -132,6 +132,42 @@ abstract class Model
 		}
     }
 
+	/**
+	 * Get a record in the database
+	 *
+	 * @param string $field Field name to search under
+	 * @param string $value Field value to search for
+	 * @return string|object
+	 */
+	public static function where($field, $value) {
+		try {
+			$table = Backbone::mapClassToTable(get_called_class());
+		} catch (TableDoesNotExistException $e) {
+			return $e->message();
+		}
+
+		try {
+			$dbConn = DbConn::connect();
+			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . '=' . '"' . $value . '"';
+			$query = $dbConn->prepare($sql);
+			var_dump($sql);
+			$query->execute();
+		} catch (PDOException $e) {
+			return $e->getMessage();
+		} finally {
+			$dbConn = null;
+		}
+
+		if ($query->rowCount()) {
+			$found = new static;
+			$found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
+
+			return $found;
+		} else {
+			throw new RecordNotFoundException;
+		}
+	}
+
     /**
 	 * Insert or Update a record in a database table
 	 *

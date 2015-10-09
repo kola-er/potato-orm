@@ -150,7 +150,6 @@ abstract class Model
 			$dbConn = DbConn::connect();
 			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . '=' . '"' . $value . '"';
 			$query = $dbConn->prepare($sql);
-			var_dump($sql);
 			$query->execute();
 		} catch (PDOException $e) {
 			return $e->getMessage();

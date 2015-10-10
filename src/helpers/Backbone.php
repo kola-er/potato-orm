@@ -107,18 +107,29 @@ class Backbone implements BackboneInterface
         }
 
         if (! self::checkForTable($table)) {
-            $arrayOfCharInTable = str_split($table);
-            $n = count($arrayOfCharInTable);
+            $temp = ucfirst($table);
 
-            if ($arrayOfCharInTable[$n - 1] === 's') {
-                array_pop($arrayOfCharInTable);
-                $table = implode($arrayOfCharInTable);
+            if (self::checkForTable($temp)) {
+                return $temp;
             } else {
-                $table .= 's';
-            }
+                $arrayOfCharInTable = str_split($table);
 
-            if (! self::checkForTable($table)) {
-                throw new TableDoesNotExistException;
+                if ($arrayOfCharInTable[count($arrayOfCharInTable) - 1] === 's') {
+                    array_pop($arrayOfCharInTable);
+                    $table = implode($arrayOfCharInTable);
+                } else {
+                    $table .= 's';
+                }
+
+                if (! self::checkForTable($table)) {
+                    $temp = ucfirst($table);
+
+                    if (self::checkForTable($temp)) {
+                        return $temp;
+                    } else {
+                        throw new TableDoesNotExistException;
+                    }
+                }
             }
         }
 

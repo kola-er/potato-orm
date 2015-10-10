@@ -20,7 +20,7 @@ $ composer install
 
 Create a class with the name of the corresponding table in the database. Extend the class to the base class `Model` under the namespace `Kola\PotatoOrm`.
 
-For instance, a class for `jobs` table should look like this:
+For instance, a class for `dogs` or `Dogs` or `dog` or `Dog` table should look like this:
 
 ``` php
 namespace Kola\PotatoOrm;
@@ -48,6 +48,15 @@ $dog->name = "Bruno";
 $dog->save();
 ```
 
+OR
+
+``` php
+$dog = Dog::where('name', 'Rex');
+$dog->breed = "Rottweiler";
+$dog->save();
+```
+
+
 * Delete a record
 
 ``` php
@@ -58,7 +67,13 @@ Feel free to name the class as the singular of the name of the database table. F
 
 `Note: Plural of irregular nouns are not supported`
 
-For instance, a class `Fish` should map to a table `fish`, not `fishes`. And a class `Child` should map to a table `child`, not `children`.
+For instance, a class `Fish` should map to a table `fish` or `fishs`, not `fishes`. And a class `Child` should map to a table `child` or `childs`, not `children`.
+
+## Supported database
+
+Currently, only MYSQL is supported.
+
+Work towards the support for other popular databases is in progress.
 
 ## Change log
 

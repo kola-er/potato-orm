@@ -65,7 +65,7 @@ $dog = Dog::destroy(2);
 
 Feel free to name the class as the singular of the name of the database table. For instance, `User` class for `users` table.
 
-`Note: Plural of irregular nouns are not supported`
+`Note: Plurals of irregular nouns are not supported`
 
 For instance, a class `Fish` should map to a table `fish` or `fishs`, not `fishes`. And a class `Child` should map to a table `child` or `childs`, not `children`.
 

@@ -21,7 +21,7 @@ abstract class Model
     /**
      * @var array Array for holding properties set with magic method __set()
      */
-    public $record = [];
+    protected $record = [];
 
     /**
 	 * Set property dynamically
@@ -33,6 +33,15 @@ abstract class Model
     {
         $this->record[$field] = $value;
     }
+
+	/**
+	 * Provide a read access to protected $record array
+	 *
+	 * @return array $record Array of variables set dynamically with method __set()
+	 */
+	public function getRecord() {
+		return $this->record;
+	}
 
     /**
 	 * Delete a record from the database table
@@ -91,7 +100,7 @@ abstract class Model
 		}
 
 		if ($query->rowCount()) {
-			return json_encode($query->fetchAll(DbConn::FETCH_OBJ), JSON_FORCE_OBJECT);
+			return $query->fetchAll(DbConn::FETCH_ASSOC);
 		} else {
 			throw new EmptyTableException;
 		}

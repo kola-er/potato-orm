@@ -24,8 +24,8 @@ abstract class Model
     protected $record = [];
 
     /**
-	 * Set property dynamically
-	 *
+     * Set property dynamically
+     *
      * @param string $field Property set dynamically
      * @param string $value Value of property set dynamically
      */
@@ -34,163 +34,144 @@ abstract class Model
         $this->record[$field] = $value;
     }
 
-	/**
-	 * Provide a read access to protected $record array
-	 *
-	 * @return array $record Array of variables set dynamically with method __set()
-	 */
-	public function getRecord() {
-		return $this->record;
-	}
+    /**
+     * Provide a read access to protected $record array
+     *
+     * @return array $record Array of variables set dynamically with method __set()
+     */
+    public function getRecord()
+    {
+        return $this->record;
+    }
 
     /**
-	 * Delete a record from the database table
-	 *
+     * Delete a record from the database table
+     *
      * @param int $record Index of record to be deleted
      * @return bool|string
      */
     public static function destroy($record)
     {
-		try {
-			$table = Backbone::mapClassToTable(get_called_class());
-		} catch (TableDoesNotExistException $e) {
-			return $e->message();
-		}
+		$table = Backbone::getTable(get_called_class());
 
         try {
-			$dbConn = DbConn::connect();
+            $dbConn = DbConn::connect();
             $query = $dbConn->prepare('DELETE FROM ' . $table . ' WHERE id= ' . $record);
             $query->execute();
         } catch (PDOException $e) {
             return $e->getMessage();
         } finally {
-			$dbConn = null;
-		}
+            $dbConn = null;
+        }
 
-		$check = $query->rowCount();
+        $check = $query->rowCount();
 
-		if ($check) {
-			return $check;
-		} else {
-			throw new RecordNotFoundException;
-		}
+        if ($check) {
+            return $check;
+        } else {
+            throw new RecordNotFoundException;
+        }
     }
 
-	/**
-	 * Get all the records in a database table
-	 *
-	 * @return string|object
-	 */
+    /**
+     * Get all the records in a database table
+     *
+     * @return string|object
+     */
     public static function getAll()
     {
-		try {
-			$table = Backbone::mapClassToTable(get_called_class());
-		} catch (TableDoesNotExistException $e) {
-			return $e->message();
-		}
+		$table = Backbone::getTable(get_called_class());
 
         try {
-			$dbConn = DbConn::connect();
+            $dbConn = DbConn::connect();
             $query = $dbConn->prepare('SELECT * FROM ' . $table);
             $query->execute();
         } catch (PDOException $e) {
             return $e->getMessage();
         } finally {
-			$dbConn = null;
-		}
+            $dbConn = null;
+        }
 
-		if ($query->rowCount()) {
-			return $query->fetchAll(DbConn::FETCH_ASSOC);
-		} else {
-			throw new EmptyTableException;
-		}
-
+        if ($query->rowCount()) {
+            return $query->fetchAll(DbConn::FETCH_ASSOC);
+        } else {
+            throw new EmptyTableException;
+        }
     }
 
     /**
-	 * Get a record in a database table
-	 *
+     * Get a record in a database table
+     *
      * @param int $record Index of record to get
      * @return string|object
      */
     public static function find($record)
     {
-		try {
-			$table = Backbone::mapClassToTable(get_called_class());
-		} catch (TableDoesNotExistException $e) {
-			return $e->message();
-		}
+        $table = Backbone::getTable(get_called_class());
 
         try {
-			$dbConn = DbConn::connect();
+            $dbConn = DbConn::connect();
             $query = $dbConn->prepare('SELECT * FROM ' . $table . ' WHERE id= ' . $record);
             $query->execute();
         } catch (PDOException $e) {
             return $e->getMessage();
         } finally {
-			$dbConn = null;
-		}
+            $dbConn = null;
+        }
 
-		if ($query->rowCount()) {
-			$found = new static;
-			$found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
+        if ($query->rowCount()) {
+            $found = new static;
+            $found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
 
-			return $found;
-		} else {
-			throw new RecordNotFoundException;
-		}
+            return $found;
+        } else {
+            throw new RecordNotFoundException;
+        }
     }
 
-	/**
-	 * Get a record in the database
-	 *
-	 * @param string $field Field name to search under
-	 * @param string $value Field value to search for
-	 * @return string|object
-	 */
-	public static function where($field, $value) {
-		try {
-			$table = Backbone::mapClassToTable(get_called_class());
-		} catch (TableDoesNotExistException $e) {
-			return $e->message();
-		}
+    /**
+     * Get a record in the database
+     *
+     * @param string $field Field name to search under
+     * @param string $value Field value to search for
+     * @return string|object
+     */
+    public static function where($field, $value)
+    {
+		$table = Backbone::getTable(get_called_class());
 
-		try {
-			$dbConn = DbConn::connect();
-			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . '=' . '"' . $value . '"';
-			$query = $dbConn->prepare($sql);
-			$query->execute();
-		} catch (PDOException $e) {
-			return $e->getMessage();
-		} finally {
-			$dbConn = null;
-		}
+        try {
+            $dbConn = DbConn::connect();
+            $sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . '=' . '"' . $value . '"';
+            $query = $dbConn->prepare($sql);
+            $query->execute();
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        } finally {
+            $dbConn = null;
+        }
 
-		if ($query->rowCount()) {
-			$found = new static;
-			$found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
+        if ($query->rowCount()) {
+            $found = new static;
+            $found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
 
-			return $found;
-		} else {
-			throw new RecordNotFoundException;
-		}
-	}
+            return $found;
+        } else {
+            throw new RecordNotFoundException;
+        }
+    }
 
     /**
-	 * Insert or Update a record in a database table
-	 *
+     * Insert or Update a record in a database table
+     *
      * @return bool|string
      */
     public function save()
     {
-		try {
-			$table = Backbone::mapClassToTable(get_called_class());
-		} catch (TableDoesNotExistException $e) {
-			return $e->message();
-		}
+		$table = Backbone::getTable(get_called_class());
 
         try {
-			$dbConn = DbConn::connect();
+            $dbConn = DbConn::connect();
 
             if (isset($this->record['dbData']) && is_array($this->record['dbData'])) {
                 $sql = 'UPDATE ' . $table . ' SET ' . Backbone::tokenize(implode(',', Backbone::joinKeysAndValuesOfArray($this->record)), ',') . ' WHERE id=' . $this->record['dbData']['id'];
@@ -204,9 +185,11 @@ abstract class Model
         } catch (PDOException $e) {
             return $e->getMessage();
         } finally {
-			$dbConn = null;
-		}
+            $dbConn = null;
+        }
 
-		return $query->rowCount();
+        return $query->rowCount();
     }
+
+
 }

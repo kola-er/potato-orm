@@ -21,7 +21,7 @@ class Backbone implements BackboneInterface
 	 * @param string $word
 	 * @return string $word
 	 */
-	private function addOrRemoveS($word) {
+	public static function addOrRemoveS($word) {
 		$arrayOfCharInTable = str_split($word);
 
 		if ($arrayOfCharInTable[count($arrayOfCharInTable) - 1] === 's') {
@@ -138,7 +138,7 @@ class Backbone implements BackboneInterface
             if (self::checkForTable($temp)) {
                 return $temp;
             } else {
-                self::addOrRemoveS($table);
+                $table = self::addOrRemoveS($table);
 
                 if (! self::checkForTable($table)) {
                     $temp = ucfirst($table);
@@ -154,4 +154,20 @@ class Backbone implements BackboneInterface
 
         return $table;
     }
+
+	/**
+	 * Get the table name that maps to a given class model
+	 *
+	 * @param string $className Name of a class to be mapped to a table in the database
+	 * @return string $table Database table successfully mapped to the class being used
+	 */
+	public static function getTable($className) {
+		try {
+			$table = self::mapClassToTable($className);
+		} catch (TableDoesNotExistException $e) {
+			return $e->message();
+		}
+
+		return $table;
+	}
 }

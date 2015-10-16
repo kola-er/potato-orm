@@ -13,14 +13,7 @@ use \PDO;
 
 final class DbConn extends PDO implements DbConnInterface
 {
-    /**
-     * Override the parent class PDO constructor to prevent instantiation-argument requirement
-     */
-    public function __construct()
-    {
-    }
-
-    /**
+	/**
      * Make a database connection
      *
      * @return PDO|string

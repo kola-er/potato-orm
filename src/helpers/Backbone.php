@@ -15,6 +15,25 @@ use Kola\PotatoOrm\Exception\TableDoesNotExistException;
 
 class Backbone implements BackboneInterface
 {
+	/**
+	 * Add or remove 's' from the end of a word
+	 *
+	 * @param string $word
+	 * @return string $word
+	 */
+	private function addOrRemoveS($word) {
+		$arrayOfCharInTable = str_split($word);
+
+		if ($arrayOfCharInTable[count($arrayOfCharInTable) - 1] === 's') {
+			array_pop($arrayOfCharInTable);
+			$word = implode($arrayOfCharInTable);
+		} else {
+			$word .= 's';
+		}
+
+		return $word;
+	}
+
     /**
      * Generate unnamed placeholders depending on the number of table fields concerned
      *
@@ -62,7 +81,6 @@ class Backbone implements BackboneInterface
     public static function joinKeysAndValuesOfArray(array $record)
     {
         $temp = [];
-
 		for ($i = 1; $i < count($record); $i++) {
 			$value = array_values($record)[$i];
 
@@ -79,7 +97,7 @@ class Backbone implements BackboneInterface
     }
 
     /**
-     * Check for the existent of a table in the database being used
+     * Check for the existence of a table in the database being used
      *
      * @param string $table Name of table to be searched in the database
      * @return bool
@@ -120,14 +138,7 @@ class Backbone implements BackboneInterface
             if (self::checkForTable($temp)) {
                 return $temp;
             } else {
-                $arrayOfCharInTable = str_split($table);
-
-                if ($arrayOfCharInTable[count($arrayOfCharInTable) - 1] === 's') {
-                    array_pop($arrayOfCharInTable);
-                    $table = implode($arrayOfCharInTable);
-                } else {
-                    $table .= 's';
-                }
+                self::addOrRemoveS($table);
 
                 if (! self::checkForTable($table)) {
                     $temp = ucfirst($table);

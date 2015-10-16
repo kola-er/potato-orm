@@ -1,5 +1,7 @@
 # potato-orm
 
+[![Build Status](https://travis-ci.org/andela-kerinoso/potato-orm.svg)](https://travis-ci.org/andela-kerinoso/potato-orm)
+
 This is an ORM package that manages the persistence of simple database CRUD operations.
 
 ## Installation

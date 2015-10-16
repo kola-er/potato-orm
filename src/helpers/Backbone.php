@@ -63,9 +63,17 @@ class Backbone implements BackboneInterface
     {
         $temp = [];
 
-        for ($i = 1; $i < count($record); $i++) {
-            array_push($temp, array_keys($record)[$i] . '=' . '"' . array_values($record)[$i] . '"');
-        }
+		for ($i = 1; $i < count($record); $i++) {
+			$value = array_values($record)[$i];
+
+			if (is_null($value)) {
+				$value = 'NULL';
+			} else {
+				$value = '"' . $value . '"';
+			}
+
+			array_push($temp, array_keys($record)[$i] . '=' . $value);
+		}
 
         return $temp;
     }

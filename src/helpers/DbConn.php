@@ -9,7 +9,6 @@
 
 namespace Kola\PotatoOrm\Helper;
 
-use Kola\PotatoOrm\Exception\UnsuccessfulDbConnException as ConnEx;
 use \PDO;
 
 final class DbConn extends PDO implements DbConnInterface
@@ -33,8 +32,8 @@ final class DbConn extends PDO implements DbConnInterface
         try {
             $dbConn = new PDO(getenv('DB_ENGINE') . ':host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_DATABASE') . ';charset=utf8mb4', getenv('DB_USERNAME'), getenv('DB_PASSWORD'), [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 				PDO::ATTR_PERSISTENT => false]);
-        } catch (ConnEx $e) {
-            return $e->message();
+        } catch (\PDOException $e) {
+            return 'Error in connection';
         }
 
         return $dbConn;

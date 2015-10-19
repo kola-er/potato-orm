@@ -87,7 +87,7 @@ class Backbone implements BackboneInterface
 			if (is_null($value)) {
 				$value = 'NULL';
 			} else {
-				$value = '"' . $value . '"';
+				$value = "'" . $value . "'";
 			}
 
 			array_push($temp, array_keys($record)[$i] . '=' . $value);

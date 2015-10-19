@@ -73,7 +73,7 @@ For instance, a class `Fish` should map to a table `fish` or `fishs`, not `fishe
 
 ## Supported database
 
-Currently, only MYSQL is supported.
+Currently, only MYSQL and PostgreSQL are supported.
 
 Work towards the support for other popular databases is in progress.
 

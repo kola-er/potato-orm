@@ -32,8 +32,8 @@ class DbConn extends PDO implements DbConnInterface
 		try {
 			if ($engine === 'pgsql') {
 				$dbConn = new PDO($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
-				$dbConn->query([PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-								PDO::ATTR_PERSISTENT => false]);
+				$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$dbConn->setAttribute(PDO::ATTR_PERSISTENT, false);
 			} elseif ($engine === 'mysql') {
 				$dbConn = new PDO($engine . ':host=' . $host . ';dbname=' . $dbname . ';charset=utf8mb4', $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_PERSISTENT => false]);
@@ -50,7 +50,9 @@ class DbConn extends PDO implements DbConnInterface
      */
     private static function loadDotenv()
     {
-        $dotenv = new \Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT']);
-        $dotenv->load();
+		if (! getenv('APP_ENV')) {
+			$dotenv = new \Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT']);
+			$dotenv->load();
+		}
     }
 }

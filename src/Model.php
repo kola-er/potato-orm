@@ -142,9 +142,10 @@ abstract class Model
 
         try {
             $dbConn = DbConn::connect();
-            $sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . '=' . '"' . $value . '"';
-            $query = $dbConn->prepare($sql);
-            $query->execute();
+
+			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . ' = ?';
+			$query = $dbConn->prepare($sql);
+			$query->execute([$value]);
         } catch (PDOException $e) {
             return $e->getMessage();
         } finally {

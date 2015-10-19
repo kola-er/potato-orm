@@ -31,7 +31,7 @@ class DbConn extends PDO implements DbConnInterface
 
 		try {
 			if ($engine === 'pgsql') {
-				$dbConn = new PDO($engine . ':host=' . $host . ';port=t' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
+				$dbConn = new PDO($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
 				$dbConn->query([PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_PERSISTENT => false]);
 			} elseif ($engine === 'mysql') {

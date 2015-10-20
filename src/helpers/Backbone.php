@@ -132,24 +132,12 @@ class Backbone implements BackboneInterface
             $table = strtolower($className);
         }
 
-        if (! self::checkForTable($table)) {
-            $temp = ucfirst($table);
+        if ($table == 'user' || (! self::checkForTable($table))) {
+			$table = self::addOrRemoveS($table);
 
-            if (self::checkForTable($temp)) {
-                return $temp;
-            } else {
-                $table = self::addOrRemoveS($table);
-
-                if (! self::checkForTable($table)) {
-                    $temp = ucfirst($table);
-
-                    if (self::checkForTable($temp)) {
-                        return $temp;
-                    } else {
-                        throw new TableDoesNotExistException;
-                    }
-                }
-            }
+			if (! self::checkForTable($table)) {
+				throw new TableDoesNotExistException;
+			}
         }
 
         return $table;

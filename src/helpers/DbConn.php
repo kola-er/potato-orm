@@ -11,16 +11,14 @@ namespace Kola\PotatoOrm\Helper;
 
 use \PDO;
 
-class DbConn extends PDO implements DbConnInterface
+class DbConn extends PDO
 {
 	/**
-     * Make a database connection
-     *
-     * @return PDO|string
-     */
-    public static function connect()
+	 *
+	 */
+    public function __construct()
     {
-        self::loadDotenv();
+        $this->loadDotenv();
 
 		$engine = getenv('DB_ENGINE');
 		$host = getenv('DB_HOST');
@@ -31,11 +29,11 @@ class DbConn extends PDO implements DbConnInterface
 
 		try {
 			if ($engine === 'pgsql') {
-				$dbConn = new PDO($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
+				$dbConn = parent::__construct($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
 				$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				$dbConn->setAttribute(PDO::ATTR_PERSISTENT, false);
 			} elseif ($engine === 'mysql') {
-				$dbConn = new PDO($engine . ':host=' . $host . ';dbname=' . $dbname . ';charset=utf8mb4', $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+				$dbConn = parent::__construct($engine . ':host=' . $host . ';dbname=' . $dbname . ';charset=utf8mb4', $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_PERSISTENT => false]);
 			}
         } catch (\PDOException $e) {
@@ -48,7 +46,7 @@ class DbConn extends PDO implements DbConnInterface
     /**
      * Load Dotenv to grant getenv() access to environment variables in .env file
      */
-    private static function loadDotenv()
+    protected function loadDotenv()
     {
 		if (! getenv('APP_ENV')) {
 			$dotenv = new \Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT']);

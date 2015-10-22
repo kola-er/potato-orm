@@ -44,60 +44,12 @@ abstract class Model
         return $this->record;
     }
 
-    /**
-     * Delete a record from the database table
-     *
-     * @param int $record Index of record to be deleted
-     * @return bool|string
-     */
-    public static function destroy($record)
-    {
-		$table = Backbone::getTable(get_called_class());
-
-        try {
-            $dbConn = DbConn::connect();
-            $query = $dbConn->prepare('DELETE FROM ' . $table . ' WHERE id= ' . $record);
-            $query->execute();
-        } catch (PDOException $e) {
-            return $e->getMessage();
-        } finally {
-            $dbConn = null;
-        }
-
-        $check = $query->rowCount();
-
-        if ($check) {
-            return $check;
-        } else {
-            throw new RecordNotFoundException;
-        }
-    }
-
-    /**
-     * Get all the records in a database table
-     *
-     * @return string|object
-     */
-    public static function getAll()
-    {
-		$table = Backbone::getTable(get_called_class());
-
-        try {
-            $dbConn = DbConn::connect();
-            $query = $dbConn->prepare('SELECT * FROM ' . $table);
-            $query->execute();
-        } catch (PDOException $e) {
-            return $e->getMessage();
-        } finally {
-            $dbConn = null;
-        }
-
-        if ($query->rowCount()) {
-            return $query->fetchAll(DbConn::FETCH_ASSOC);
-        } else {
-            throw new EmptyTableException;
-        }
-    }
+	/**
+	 * @return DbConn Db connection
+	 */
+	protected function makeDbConn() {
+		return new DbConn();
+	}
 
     /**
      * Get a record in a database table
@@ -107,26 +59,7 @@ abstract class Model
      */
     public static function find($record)
     {
-        $table = Backbone::getTable(get_called_class());
-
-        try {
-            $dbConn = DbConn::connect();
-            $query = $dbConn->prepare('SELECT * FROM ' . $table . ' WHERE id= ' . $record);
-            $query->execute();
-        } catch (PDOException $e) {
-            return $e->getMessage();
-        } finally {
-            $dbConn = null;
-        }
-
-        if ($query->rowCount()) {
-            $found = new static;
-            $found->dbData = $query->fetch(DbConn::FETCH_ASSOC);
-
-            return $found;
-        } else {
-            throw new RecordNotFoundException;
-        }
+		return self::where('id', $record);
     }
 
     /**
@@ -141,7 +74,7 @@ abstract class Model
 		$table = Backbone::getTable(get_called_class());
 
         try {
-            $dbConn = DbConn::connect();
+            $dbConn = static::makeDbConn();
 
 			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . ' = ?';
 			$query = $dbConn->prepare($sql);
@@ -162,7 +95,62 @@ abstract class Model
         }
     }
 
-    /**
+	/**
+	 * Delete a record from the database table
+	 *
+	 * @param int $record Index of record to be deleted
+	 * @return bool|string
+	 */
+	public static function destroy($record)
+	{
+		$table = Backbone::getTable(get_called_class());
+
+		try {
+			$dbConn = static::makeDbConn();
+			$query = $dbConn->prepare('DELETE FROM ' . $table . ' WHERE id= ' . $record);
+			$query->execute();
+		} catch (PDOException $e) {
+			return $e->getMessage();
+		} finally {
+			$dbConn = null;
+		}
+
+		$check = $query->rowCount();
+
+		if ($check) {
+			return $check;
+		} else {
+			throw new RecordNotFoundException;
+		}
+	}
+
+	/**
+	 * Get all the records in a database table
+	 *
+	 * @return string|object
+	 */
+	public static function getAll()
+	{
+		$table = Backbone::getTable(get_called_class());
+
+		try {
+			$dbConn = static::makeDbConn();
+			$query = $dbConn->prepare('SELECT * FROM ' . $table);
+			$query->execute();
+		} catch (PDOException $e) {
+			return $e->getMessage();
+		} finally {
+			$dbConn = null;
+		}
+
+		if ($query->rowCount()) {
+			return $query->fetchAll(DbConn::FETCH_ASSOC);
+		} else {
+			throw new EmptyTableException;
+		}
+	}
+
+	/**
      * Insert or Update a record in a database table
      *
      * @return bool|string
@@ -172,7 +160,7 @@ abstract class Model
 		$table = Backbone::getTable(get_called_class());
 
         try {
-            $dbConn = DbConn::connect();
+            $dbConn = static::makeDbConn();
 
             if (isset($this->record['dbData']) && is_array($this->record['dbData'])) {
                 $sql = 'UPDATE ' . $table . ' SET ' . Backbone::tokenize(implode(',', Backbone::joinKeysAndValuesOfArray($this->record)), ',') . ' WHERE id=' . $this->record['dbData']['id'];
@@ -191,6 +179,4 @@ abstract class Model
 
         return $query->rowCount();
     }
-
-
 }

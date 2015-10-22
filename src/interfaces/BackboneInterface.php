@@ -40,9 +40,10 @@ interface BackboneInterface
 	 * Check for the existent of a table in the database being used
 	 *
 	 * @param string $table Name of table to be searched in the database
+	 * @param DbConn $dbConn Database connection object
 	 * @return bool
 	 */
-	public static function checkForTable($table);
+	public static function checkForTable($table, DbConn $dbConn);
 
 	/**
 	 * Map a class to a database table
@@ -51,4 +52,12 @@ interface BackboneInterface
 	 * @return string $table Database table successfully mapped to the class being used
 	 */
 	public static function mapClassToTable($className);
+
+	/**
+	 * Get the table name that maps to a given class model
+	 *
+	 * @param string $className Name of a class to be mapped to a table in the database
+	 * @return string $table Database table successfully mapped to the class being used
+	 */
+	public static function getTable($className);
 }

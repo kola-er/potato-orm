@@ -15,6 +15,13 @@ use Kola\PotatoOrm\Exception\TableDoesNotExistException;
 
 class Backbone implements BackboneInterface
 {
+	/**
+	 * @return DbConn Db connection
+	 */
+	public static function makeDbConn() {
+		return new DbConn();
+	}
+
     /**
      * Add or remove 's' from the end of a word
      *
@@ -104,8 +111,12 @@ class Backbone implements BackboneInterface
      * @param DbConn $dbConn Database connection object
      * @return bool
      */
-    public static function checkForTable($table, DbConn $dbConn)
+    public static function checkForTable($table, $dbConn = NULL)
     {
+		if (is_null($dbConn)) {
+			$dbConn = self::makeDbConn();
+		}
+
         try {
             $result = $dbConn->query('SELECT 1 FROM ' . $table . ' LIMIT 1');
         } catch (\PDOException $e) {
@@ -114,7 +125,7 @@ class Backbone implements BackboneInterface
             $dbConn = null;
         }
 
-        return $result !== false;
+        return $result ? true : false;
     }
 
     /**
@@ -123,7 +134,7 @@ class Backbone implements BackboneInterface
      * @param string $className Name of a class to be mapped to a table in the database
      * @return string $table Database table successfully mapped to the class being used
      */
-    public static function mapClassToTable($className)
+    public static function mapClassToTable($className, $dbConn = NULL)
     {
         $demarcation = strrpos($className, '\\', -1);
 
@@ -133,7 +144,10 @@ class Backbone implements BackboneInterface
             $table = strtolower($className);
         }
 
-		$dbConn = new DbConn;
+		if (is_null($dbConn)) {
+			$dbConn = self::makeDbConn();
+		}
+
 
         if ($table == 'user' || (! self::checkForTable($table, $dbConn))) {
             $table = self::addOrRemoveS($table);
@@ -152,10 +166,14 @@ class Backbone implements BackboneInterface
      * @param string $className Name of a class to be mapped to a table in the database
      * @return string $table Database table successfully mapped to the class being used
      */
-    public static function getTable($className)
+    public static function getTable($className, $dbConn = NULL)
     {
+		if (is_null($dbConn)) {
+			$dbConn = self::makeDbConn();
+		}
+
         try {
-            $table = self::mapClassToTable($className);
+            $table = self::mapClassToTable($className, $dbConn);
         } catch (TableDoesNotExistException $e) {
             return $e->message();
         }

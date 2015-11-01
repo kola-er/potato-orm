@@ -14,7 +14,7 @@ use \PDO;
 class DbConn extends PDO
 {
 	/**
-	 *
+	 * Handle DB Connection
 	 */
     public function __construct()
     {
@@ -28,19 +28,16 @@ class DbConn extends PDO
 		$password = getenv('DB_PASSWORD');
 
 		try {
-			if ($engine === 'pgsql') {
-				$dbConn = parent::__construct($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
-				$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$dbConn->setAttribute(PDO::ATTR_PERSISTENT, false);
-			} elseif ($engine === 'mysql') {
-				$dbConn = parent::__construct($engine . ':host=' . $host . ';dbname=' . $dbname . ';charset=utf8mb4', $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			if ($engine == 'pgsql') {
+				parent::__construct($engine . ':host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';user=' . $user . ';password=' . $password);
+			} elseif ($engine == 'mysql') {
+				parent::__construct($engine . ':host=' . $host . ';dbname=' . $dbname . ';charset=utf8mb4', $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_PERSISTENT => false]);
 			}
         } catch (\PDOException $e) {
             return 'Error in connection';
         }
 
-        return $dbConn;
     }
 
     /**
@@ -48,7 +45,7 @@ class DbConn extends PDO
      */
     protected function loadDotenv()
     {
-		if (! getenv('APP_ENV')) {
+		if (getenv('APP_ENV') !== 'production') {
 			$dotenv = new \Dotenv\Dotenv($_SERVER['DOCUMENT_ROOT']);
 			$dotenv->load();
 		}

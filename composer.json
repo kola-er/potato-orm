@@ -22,7 +22,8 @@
   "autoload-dev": {
     "psr-4": {
       "Kola\\PotatoOrm\\Test\\": "tests/"
-    }
+    },
+    "classmap": ["tests/"]
   },
   "require": {
     "php": ">=5.5",

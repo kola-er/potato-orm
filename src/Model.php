@@ -44,22 +44,15 @@ abstract class Model
         return $this->record;
     }
 
-	/**
-	 * @return DbConn Db connection
-	 */
-	protected function makeDbConn() {
-		return new DbConn();
-	}
-
     /**
      * Get a record in a database table
      *
      * @param int $record Index of record to get
      * @return string|object
      */
-    public static function find($record)
+    public static function find($record, $dbConn = NULL)
     {
-		return self::where('id', $record);
+		return self::where('id', $record, $dbConn);
     }
 
     /**
@@ -69,15 +62,16 @@ abstract class Model
      * @param string $value Field value to search for
      * @return string|object
      */
-    public static function where($field, $value)
+    public static function where($field, $value, $dbConn = NULL)
     {
-		$table = Backbone::getTable(get_called_class());
+		$table = Backbone::getTable(get_called_class(), $dbConn);
+
+		if (is_null($dbConn)) {
+			$dbConn = Backbone::makeDbConn();
+		}
 
         try {
-            $dbConn = static::makeDbConn();
-
-			$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $field . ' = ?';
-			$query = $dbConn->prepare($sql);
+			$query = $dbConn->prepare('SELECT * FROM ' . $table . ' WHERE ' . $field . ' = ?');
 			$query->execute([$value]);
         } catch (PDOException $e) {
             return $e->getMessage();
@@ -101,12 +95,15 @@ abstract class Model
 	 * @param int $record Index of record to be deleted
 	 * @return bool|string
 	 */
-	public static function destroy($record)
+	public static function destroy($record, $dbConn = NULL)
 	{
-		$table = Backbone::getTable(get_called_class());
+		$table = Backbone::getTable(get_called_class(), $dbConn);
+
+		if (is_null($dbConn)) {
+			$dbConn = Backbone::makeDbConn();
+		}
 
 		try {
-			$dbConn = static::makeDbConn();
 			$query = $dbConn->prepare('DELETE FROM ' . $table . ' WHERE id= ' . $record);
 			$query->execute();
 		} catch (PDOException $e) {
@@ -129,12 +126,15 @@ abstract class Model
 	 *
 	 * @return string|object
 	 */
-	public static function getAll()
+	public static function getAll($dbConn = NULL)
 	{
-		$table = Backbone::getTable(get_called_class());
+		$table = Backbone::getTable(get_called_class(), $dbConn);
+
+		if (is_null($dbConn)) {
+			$dbConn = Backbone::makeDbConn();
+		}
 
 		try {
-			$dbConn = static::makeDbConn();
 			$query = $dbConn->prepare('SELECT * FROM ' . $table);
 			$query->execute();
 		} catch (PDOException $e) {
@@ -155,13 +155,15 @@ abstract class Model
      *
      * @return bool|string
      */
-    public function save()
+    public function save($dbConn = NULL)
     {
-		$table = Backbone::getTable(get_called_class());
+		$table = Backbone::getTable(get_called_class(), $dbConn);
+
+		if (is_null($dbConn)) {
+			$dbConn = Backbone::makeDbConn();
+		}
 
         try {
-            $dbConn = static::makeDbConn();
-
             if (isset($this->record['dbData']) && is_array($this->record['dbData'])) {
                 $sql = 'UPDATE ' . $table . ' SET ' . Backbone::tokenize(implode(',', Backbone::joinKeysAndValuesOfArray($this->record)), ',') . ' WHERE id=' . $this->record['dbData']['id'];
                 $query = $dbConn->prepare($sql);

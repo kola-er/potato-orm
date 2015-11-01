@@ -14,6 +14,8 @@ use Kola\PotatoOrm\Helper\Backbone;
 
 class BackboneTest extends \PHPUnit_Framework_TestCase
 {
+	const TABLE_DOES_NOT_EXIST_EXCEPTION_MESSAGE = 'Table does not exist!!! Create a table with the name of the corresponding class in lowercase. Feel free to pluralize the name, but plurals of irregular nouns are not supported.';
+
 	/**
 	 * Tear down all mock objects
 	 */
@@ -31,11 +33,50 @@ class BackboneTest extends \PHPUnit_Framework_TestCase
         $statement = Mockery::mock('\PDOStatement');
 
         $dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM dogs LIMIT 1')->andReturn($statement);
-        $dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM users LIMIT 1')->andReturn(false);
+		$this->assertTrue(Backbone::checkForTable('dogs', $dbConnMocked));
 
-        $this->assertTrue(Backbone::checkForTable('dogs', $dbConnMocked));
+        $dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM users LIMIT 1')->andReturn(false);
         $this->assertFalse(Backbone::checkForTable('users', $dbConnMocked));
     }
+
+	/**
+	 * Test method mapClassToTable of class Backbone
+	 */
+	public function testMapClassToTable() {
+		$dbConnMocked = Mockery::mock('Kola\PotatoOrm\Helper\DbConn');
+		$statement = Mockery::mock('\PDOStatement');
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM users LIMIT 1')->andReturn($statement);
+		$this->assertEquals('users', Backbone::mapClassToTable('Kola\PotatoOrm\User', $dbConnMocked));
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM dog LIMIT 1')->andReturn(false);
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM dogs LIMIT 1')->andReturn($statement);
+		$this->assertEquals('dogs', Backbone::mapClassToTable('Kola\PotatoOrm\Dog', $dbConnMocked));
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM job LIMIT 1')->andReturn(false);
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM jobs LIMIT 1')->andReturn(false);
+		$this->setExpectedException('Kola\PotatoOrm\Exception\TableDoesNotExistException');
+		Backbone::mapClassToTable('Kola\PotatoOrm\Job', $dbConnMocked);
+	}
+
+	/**
+	 * Test method getTable of class Backbone
+	 */
+	public function testGetTable() {
+		$dbConnMocked = Mockery::mock('Kola\PotatoOrm\Helper\DbConn');
+		$statement = Mockery::mock('\PDOStatement');
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM users LIMIT 1')->andReturn($statement);
+		$this->assertEquals('users', Backbone::getTable('Kola\PotatoOrm\User', $dbConnMocked));
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM dog LIMIT 1')->andReturn(false);
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM dogs LIMIT 1')->andReturn($statement);
+		$this->assertEquals('dogs', Backbone::getTable('Kola\PotatoOrm\Dog', $dbConnMocked));
+
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM job LIMIT 1')->andReturn(false);
+		$dbConnMocked->shouldReceive('query')->with('SELECT 1 FROM jobs LIMIT 1')->andReturn(false);
+		$this->assertEquals(self::TABLE_DOES_NOT_EXIST_EXCEPTION_MESSAGE, Backbone::getTable('Kola\PotatoOrm\Job', $dbConnMocked));
+	}
 
 	/**
 	 * Test method addOrRemoveS of class Backbone

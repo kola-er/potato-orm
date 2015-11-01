@@ -40,10 +40,10 @@ interface BackboneInterface
 	 * Check for the existent of a table in the database being used
 	 *
 	 * @param string $table Name of table to be searched in the database
-	 * @param DbConn $dbConn Database connection object
+	 * @param $dbConn Database connection object
 	 * @return bool
 	 */
-	public static function checkForTable($table, DbConn $dbConn);
+	public static function checkForTable($table, $dbConn);
 
 	/**
 	 * Map a class to a database table
